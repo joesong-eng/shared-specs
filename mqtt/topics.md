@@ -135,20 +135,22 @@ MQTT_TOPICS = [
 ]
 ```
 
-## 欄位對照表（韌體 → 後端）
+## 欄位對照表（韌體內部 → MQTT → 後端）
 
-> ⚠️ **重要**: 韌體發送的欄位名稱與後端資料庫欄位不同，需要轉換
+> ⚠️ **重要**: 有三層欄位名稱，需要注意轉換
 
-| 韌體欄位 (MQTT) | 後端欄位 (DB) | 說明 |
-|-----------------|---------------|------|
-| `credit_in` | `coin_in_count` | 入金計數 |
-| `coin_out` | `payout_count` | 出金計數 |
-| `ball_in` | `ball_in_count` | 入球計數 |
-| `ball_out` | `ball_out_count` | 出球計數 |
-| `assign_credit` | `assign_count` | 開分計數 |
-| `settled_credit` | `settled_count` | 洗分計數 |
+| 韌體內部變數 | MQTT 發送欄位 | 後端 DB 欄位 | 說明 |
+|--------------|---------------|--------------|------|
+| `credit_in` | `credit_in` | `coin_in_count` | 入金計數 |
+| `credit_out` | `coin_out` | `payout_count` | 出金計數 |
+| `ball_in` | `ball_in` | `ball_in_count` | 入球計數 |
+| `ball_out` | `ball_out` | `ball_out_count` | 出球計數 |
+| `assign_credit` | `assign_credit` | `assign_count` | 開分計數 |
+| `settled_credit` | `settled_credit` | `settled_count` | 洗分計數 |
 
-**轉換責任**: `infra/listener.py` 負責將韌體欄位轉換為後端欄位
+**轉換責任**:
+- ESP32 韌體: `credit_out` → `coin_out`（已在 MQTTModule.cpp 處理）
+- infra/listener.py: MQTT 欄位 → DB 欄位
 
 ## 各專案實作要求
 
