@@ -1,5 +1,14 @@
 # 變更日誌
 
+## 2026-01-06
+
+### 新增規範文件
+
+- `device/config.md` - 設備配置規範（WiFi、MQTT、時區等）
+- 更新 `api/contracts.md` - 補充完整欄位和認證回應格式
+- 更新 `database/schema.md` - 補充完整表格欄位
+- 更新 `naming/conventions.md` - 補充 MQTT 主題、時區 ID 命名
+
 ## 2026-01-05
 
 ### ⚠️ 重大變更：MQTT 欄位名稱統一

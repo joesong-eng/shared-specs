@@ -16,8 +16,29 @@
 |------|------|------|
 | `id` | BIGINT | 主鍵 |
 | `device_uuid` | VARCHAR(50) | 設備唯一識別碼 |
-| `mqtt_topic` | VARCHAR(100) | MQTT 主題 |
+| `chip_id` | VARCHAR(50) | ESP32 晶片 ID |
+| `mqtt_topic` | VARCHAR(100) | MQTT 主題前綴 |
+| `device_type` | VARCHAR(50) | 設備類型 |
+| `firmware_version` | VARCHAR(20) | 韌體版本 |
+| `auth_key` | VARCHAR(100) | 認證金鑰 |
+| `is_online` | BOOLEAN | 是否在線 |
 | `last_heartbeat` | TIMESTAMP | 最後心跳時間 |
+| `created_at` | TIMESTAMP | 建立時間 |
+| `updated_at` | TIMESTAMP | 更新時間 |
+
+### device_data - 設備數據表
+
+| 欄位 | 類型 | 說明 |
+|------|------|------|
+| `id` | BIGINT | 主鍵 |
+| `device_id` | BIGINT | 設備 ID (FK) |
+| `coin_in_count` | INT | 入金計數 |
+| `payout_count` | INT | 出金計數 |
+| `ball_in_count` | INT | 入球計數 |
+| `ball_out_count` | INT | 出球計數 |
+| `assign_count` | INT | 開分計數 |
+| `settled_count` | INT | 洗分計數 |
+| `recorded_at` | TIMESTAMP | 記錄時間 |
 
 > 完整 schema 請參考 migration 檔案
 
@@ -25,7 +46,8 @@
 
 | Key 格式 | 用途 | TTL |
 |----------|------|-----|
-| `device:{device_uuid}:latest` | 設備最新數據 | 3600s |
+| `device:{chip_id}:latest` | 設備最新數據 | 3600s |
+| `device:{chip_id}:status` | 設備在線狀態 | 無 |
 
 ---
-*最後更新：2026-01-05*
+*最後更新：2026-01-06*

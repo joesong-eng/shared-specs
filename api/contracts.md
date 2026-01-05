@@ -18,7 +18,11 @@
   "device_id": "device_uuid",
   "data": {
     "coin_in_count": 100,
-    "payout_count": 50
+    "payout_count": 50,
+    "ball_in_count": 0,
+    "ball_out_count": 0,
+    "assign_count": 0,
+    "settled_count": 0
   }
 }
 ```
@@ -28,5 +32,28 @@
 X-Internal-Key: {內部 API 金鑰}
 ```
 
+### 認證回應
+
+| 項目 | 值 |
+|------|-----|
+| 方式 | MQTT 發布 |
+| 主題 | `device/{chip_id}/auth/response` |
+| 發布者 | infra (listener.py) |
+
+**Response:**
+```json
+{
+  "status": "success"
+}
+```
+
+或失敗時：
+```json
+{
+  "status": "failed",
+  "message": "Invalid auth_key"
+}
+```
+
 ---
-*最後更新：2026-01-05*
+*最後更新：2026-01-06*
