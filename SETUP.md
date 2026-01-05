@@ -88,6 +88,27 @@ git commit -m "chore: 更新共用規範"
 - 複製規範內容到各專案（會造成版本不同步）
 - 猜測規範內容
 
+## 各專案待辦清單
+
+### iot.tg25 (Web VPS) ✅ 已完成
+- [x] 加入 shared-specs submodule
+- [x] 更新 steering 引用共用規範
+
+### tg25-infra (DB VPS)
+- [ ] 加入 shared-specs submodule
+- [ ] 更新 listener.py 訂閱新主題
+- [ ] 更新 steering 引用共用規範
+
+### ESP32 韌體 (iotWork_V3.0)
+- [ ] 加入 shared-specs submodule（如果有 git）
+- [ ] 確認主題與規範一致
+
+### vip.tg25.win
+- [ ] 加入 shared-specs submodule
+- [ ] 更新 steering 引用共用規範
+
+---
+
 ## 聯絡
 
 - GitHub: joesong-eng
