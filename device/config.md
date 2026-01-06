@@ -60,6 +60,21 @@
 | 子網路 | `255.255.255.0` |
 | 超時 | 10 分鐘 |
 
+## 繼電器配置 (Remote Command System)
+
+| 欄位 | 類型 | 說明 | 預設值 |
+|------|------|------|--------|
+| `assign_credit_pin` | uint8 | 開分 GPIO 腳位 | 4 |
+| `settle_credit_pin` | uint8 | 洗分 GPIO 腳位 | 5 |
+| `pulse_duration_ms` | uint16 | 脈衝時長 (ms) | 100 |
+| `pulse_interval_ms` | uint16 | 脈衝間隔 (ms) | 200 |
+| `active_low` | bool | 低電平有效 | true |
+
+**說明：**
+- 繼電器使用 active-low 邏輯（0V = 觸發）
+- 開分/洗分指令透過 GPIO 脈衝控制外部繼電器
+- 多次開分時，每次脈衝間隔 `pulse_interval_ms`
+
 ## 系統常數
 
 | 常數 | 值 | 說明 |
