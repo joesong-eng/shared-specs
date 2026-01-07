@@ -30,8 +30,7 @@
 
 | 欄位 | 類型 | 說明 |
 |------|------|------|
-| `chip_id` | string | 設備 ID（用於 MQTT 主題） |
-| `auth_key` | string | 認證金鑰 |
+| `chip_id` | string | 設備序號（後台分配，用於 MQTT 主題） |
 | `device_type` | string | 設備類型 |
 | `firmware_version` | string | 韌體版本 |
 

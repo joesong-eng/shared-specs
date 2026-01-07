@@ -14,6 +14,7 @@
 | `device/{chip_id}/status` | 設備狀態 | 純文字 | 0 | ✅ |
 | `device/{chip_id}/config/timezone` | 時區更新通知 | JSON | 0 | ❌ |
 | `device/{chip_id}/events/daily_reset` | 每日歸零通知 | JSON | 0 | ❌ |
+| `device/{chip_id}/events/alarm` | 擺錘警報通知 | JSON | 0 | ❌ |
 
 ### 認證（雙向）
 
@@ -46,11 +47,8 @@
 {
   "credit_in": 100,
   "credit_out": 50,
-  "ball_in": 0,
-  "ball_out": 0,
   "assign_credit": 0,
   "settled_credit": 0,
-  "bill_denomination": 0,
   "last_activity": 0
 }
 ```
@@ -58,13 +56,10 @@
 **欄位說明：**
 | 欄位 | 類型 | 說明 |
 |------|------|------|
-| `credit_in` | uint32 | 入金計數 |
-| `credit_out` | uint32 | 出金計數 |
-| `ball_in` | uint32 | 入球計數 |
-| `ball_out` | uint32 | 出球計數 |
-| `assign_credit` | uint32 | 開分計數 |
-| `settled_credit` | uint32 | 洗分計數 |
-| `bill_denomination` | uint32 | 紙鈔面額 |
+| `credit_in` | uint32 | 入金計數（投幣/開分時計數器跳動次數） |
+| `credit_out` | uint32 | 出金計數（洗分時計數器跳動次數） |
+| `assign_credit` | uint32 | 開分計數（遠端開分觸發次數） |
+| `settled_credit` | uint32 | 洗分計數（遠端洗分觸發次數） |
 | `last_activity` | ulong | 最後活動時間戳 |
 
 ### 設備狀態 (`device/{chip_id}/status`)
@@ -79,7 +74,6 @@
 ```json
 {
   "chip_id": "iot_001",
-  "auth_key": "xxx",
   "firmware_version": "v3.0.0"
 }
 ```
@@ -122,6 +116,27 @@
   "device_id": "iot_001"
 }
 ```
+
+### 擺錘警報 (`device/{chip_id}/events/alarm`)
+
+```json
+{
+  "event_type": "alarm_triggered",
+  "timestamp": 123456789,
+  "alarm_type": "tilt",
+  "status": "triggered",
+  "device_id": "iot_001"
+}
+```
+
+**欄位說明：**
+| 欄位 | 類型 | 說明 |
+|------|------|------|
+| `event_type` | string | `alarm_triggered` 或 `alarm_cleared` |
+| `timestamp` | ulong | 事件發生時間戳 |
+| `alarm_type` | string | 警報類型：`tilt`（擺錘傾斜） |
+| `status` | string | `triggered`（觸發）或 `cleared`（解除） |
+| `device_id` | string | 設備 ID |
 
 ## 指令格式 (Server → ESP32)
 
@@ -298,16 +313,12 @@
     "pre_reset": {
       "credit_in": 1000,
       "credit_out": 500,
-      "ball_in": 200,
-      "ball_out": 150,
       "assign_credit": 50,
       "settled_credit": 30
     },
     "post_reset": {
       "credit_in": 0,
       "credit_out": 0,
-      "ball_in": 0,
-      "ball_out": 0,
       "assign_credit": 0,
       "settled_credit": 0
     }
@@ -402,6 +413,7 @@ MQTT_TOPICS = [
     ("device/+/auth/request", 0),          # 認證請求
     ("device/+/config/timezone", 0),       # 時區變更
     ("device/+/events/daily_reset", 0),    # 每日歸零
+    ("device/+/events/alarm", 0),          # 擺錘警報
     ("device/+/command/response", 0),      # 指令回應
 ]
 ```
@@ -414,8 +426,6 @@ MQTT_TOPICS = [
 |----------------|--------------|------|
 | `credit_in` | `coin_in_count` | 入金計數 |
 | `credit_out` | `payout_count` | 出金計數 |
-| `ball_in` | `ball_in_count` | 入球計數 |
-| `ball_out` | `ball_out_count` | 出球計數 |
 | `assign_credit` | `assign_count` | 開分計數 |
 | `settled_credit` | `settled_count` | 洗分計數 |
 

@@ -20,7 +20,6 @@
 | `mqtt_topic` | VARCHAR(100) | MQTT 主題前綴 |
 | `device_type` | VARCHAR(50) | 設備類型 |
 | `firmware_version` | VARCHAR(20) | 韌體版本 |
-| `auth_key` | VARCHAR(100) | 認證金鑰 |
 | `is_online` | BOOLEAN | 是否在線 |
 | `last_heartbeat` | TIMESTAMP | 最後心跳時間 |
 | `created_at` | TIMESTAMP | 建立時間 |

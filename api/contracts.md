@@ -12,9 +12,9 @@ ESP32                          listener.py                    Database
   │─── MQTT connect ──────────────>│                              │
   │                                │                              │
   │─── auth/request ──────────────>│                              │
-  │    {chip_id, auth_key,         │                              │
+  │    {chip_id,                   │                              │
   │     firmware_version}          │                              │
-  │                                │─── 查詢 auth_key ───────────>│
+  │                                │─── 查詢 chip_id ────────────>│
   │                                │<── 驗證結果 ─────────────────│
   │                                │                              │
   │<── auth/response ─────────────│                              │
@@ -36,7 +36,6 @@ ESP32                          listener.py                    Database
 ```json
 {
   "chip_id": "iot_001",
-  "auth_key": "xxx",
   "firmware_version": "v3.0.0"
 }
 ```
@@ -48,13 +47,12 @@ ESP32                          listener.py                    Database
 | 主題 | `device/{chip_id}/auth/response` |
 | 發布者 | infra (listener.py) |
 
-**⚠️ 重要：listener.py 必須驗證 auth_key**
+**⚠️ 重要：listener.py 必須驗證 chip_id 是否已在後台註冊**
 
 驗證邏輯：
 1. 收到 `auth/request` 後，查詢資料庫
-2. 檢查 `chip_id` 是否存在
-3. 檢查 `auth_key` 是否匹配
-4. 回應驗證結果
+2. 檢查 `chip_id` 是否存在且已啟用
+3. 回應驗證結果
 
 **成功回應：**
 ```json
@@ -67,7 +65,7 @@ ESP32                          listener.py                    Database
 ```json
 {
   "status": "failed",
-  "message": "Invalid auth_key"
+  "message": "Device not registered"
 }
 ```
 
@@ -83,13 +81,12 @@ ESP32                          listener.py                    Database
 ```python
 async def handle_auth_request(chip_id: str, payload: dict):
     """處理設備認證請求"""
-    auth_key = payload.get("auth_key")
     firmware_version = payload.get("firmware_version")
     
-    # 查詢資料庫驗證
+    # 查詢資料庫驗證 chip_id 是否已註冊
     device = await db.query(
-        "SELECT * FROM devices WHERE chip_id = %s AND auth_key = %s",
-        (chip_id, auth_key)
+        "SELECT * FROM devices WHERE chip_id = %s AND is_enabled = TRUE",
+        (chip_id,)
     )
     
     response_topic = f"device/{chip_id}/auth/response"
@@ -104,7 +101,7 @@ async def handle_auth_request(chip_id: str, payload: dict):
     else:
         await mqtt.publish(response_topic, {
             "status": "failed",
-            "message": "Invalid chip_id or auth_key"
+            "message": "Device not registered or disabled"
         })
 ```
 
